@@ -1,0 +1,57 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${mod_version}",
+    "name": "${mod_name}",
+    "description": "${mod_desc}",
+    "authors": [ "${mod_author}" ],
+    "contact": {
+        "homepage": "${mod_homepage}",
+        "sources": "${mod_source}",
+        "issues": "${mod_issues}"
+    },
+    "license": "${mod_license}",
+    "icon": "assets/${mod_id}/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "main": [
+            "com.mrcrayfish.controllable.ControllableMod"
+        ],
+        "client": [
+            "com.mrcrayfish.controllable.client.ClientControllableMod"
+        ]
+    },
+    "mixins": [
+        "controllable.common.mixins.json",
+        "controllable.fabric.mixins.json"
+    ],
+    "accessWidener": "controllable.accesswidener",
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric": "*",
+        "minecraft": "${minecraft_version}",
+        "java": ">=21",
+        "framework": ">=${framework_version}"
+    },
+    "breaks": {
+        "jei": "<${jei_version}",
+        "emi": "<${emi_version}",
+        "roughlyenoughitems": "<${rei_version}"
+    },
+    "custom": {
+        "framework": {
+            "configs": [
+                "com.mrcrayfish.controllable.Config"
+            ]
+        },
+        "configured": {
+            "configs": [],
+            "background": "minecraft:textures/block/dirt.png"
+        },
+        "catalogue": {
+            "banner": "assets/${mod_id}/banner.png",
+            "background": "assets/${mod_id}/background.png"
+        }
+    }
+}
+  

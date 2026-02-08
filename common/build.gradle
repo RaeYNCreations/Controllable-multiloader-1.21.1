@@ -1,0 +1,50 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+    id 'de.undercouch.download' version '5.4.0'
+}
+
+neoForge {
+    // Look for versions on https://projects.neoforged.net/neoforged/neoform
+    neoFormVersion = neo_form_version
+
+    // Automatically enable AccessTransformers if the file exists
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.add(at.absolutePath)
+    }
+}
+
+dependencies {
+    compileOnly "com.mrcrayfish:framework-common:${minecraft_version}-${framework_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-gui:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-lib:${jei_version}"
+    compileOnly "com.mrcrayfish:controllable-sdl:${controllable_sdl_version}"
+    compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.7'
+    compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
+    annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.4.1'
+}
+
+tasks.register('downloadMappings', Download) {
+    src 'https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt'
+    dest 'src/main/resources/gamecontrollerdb.txt'
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}

@@ -1,0 +1,164 @@
+package com.mrcrayfish.controllable;
+
+import com.mrcrayfish.controllable.client.input.InputLibrary;
+import com.mrcrayfish.controllable.client.settings.ActionVisibility;
+import com.mrcrayfish.controllable.client.settings.AnalogMovement;
+import com.mrcrayfish.controllable.client.settings.ButtonIcons;
+import com.mrcrayfish.controllable.client.settings.CursorStyle;
+import com.mrcrayfish.controllable.client.settings.Thumbstick;
+import com.mrcrayfish.controllable.util.Utils;
+import com.mrcrayfish.framework.api.config.BoolProperty;
+import com.mrcrayfish.framework.api.config.ConfigProperty;
+import com.mrcrayfish.framework.api.config.ConfigType;
+import com.mrcrayfish.framework.api.config.DoubleProperty;
+import com.mrcrayfish.framework.api.config.EnumProperty;
+import com.mrcrayfish.framework.api.config.FrameworkConfig;
+import net.minecraft.resources.ResourceLocation;
+
+/**
+ * Author: MrCrayfish
+ */
+public class Config
+{
+    public static final ResourceLocation CLIENT_CONFIG_ID = Utils.resource("client");
+
+    @FrameworkConfig(id = Constants.MOD_ID, name = "client", separator = '-', type = ConfigType.CLIENT)
+    public static final Client CLIENT = new Client();
+
+    public static class Client
+    {
+        @ConfigProperty(name = "options", comment = "In-game related options. These can be changed in game instead of config!")
+        public final Options options = new Options();
+
+        @ConfigProperty(name = "inputLibrary", gameRestart = true, comment = """
+            The library to use for game controller input. You can change this if you are having problems detecting game controllers.
+            Please note that changing from the default library may disable some feature in Controllable, only use this as a last resort""")
+        public final EnumProperty<InputLibrary> inputLibrary = EnumProperty.create(InputLibrary.SDL2);
+
+        public static class Options
+        {
+            @ConfigProperty(name = "rumble", comment = "If enabled, some gameplay elements will cause the controller to rumble")
+            public final BoolProperty rumble = BoolProperty.create(true);
+
+            @ConfigProperty(name = "rumbleIntensity", comment = "If rumble is enabled, this option determines the intensity. The higher the value, the stronger the feedback.")
+            public final DoubleProperty rumbleIntensity = DoubleProperty.create(0.1, 0, 1);
+
+            @ConfigProperty(name = "autoSelect", comment = "If enabled, controller will be automatically selected on start up or when plugged in")
+            public final BoolProperty autoSelect = BoolProperty.create(true);
+
+            @ConfigProperty(name = "paperDoll", comment = "If enabled, the player will render in the top left corner likes Bedrock Edition")
+            public final BoolProperty paperDoll = BoolProperty.create(true);
+
+            @ConfigProperty(name = "consoleHotbar", comment = "If enabled, hotbar will render closer to the center of the screen like on console.")
+            public final BoolProperty consoleHotbar = BoolProperty.create(true);
+
+            @ConfigProperty(name = "cursorType", comment = "The image to use for the cursor. This only applies if virtual mouse is enabled!")
+            public final EnumProperty<CursorStyle> cursorType = EnumProperty.create(CursorStyle.CONSOLE);
+
+            @ConfigProperty(name = "controllerIcons", comment = "The controller icons to use in game to display actions")
+            public final EnumProperty<ButtonIcons> controllerIcons = EnumProperty.create(ButtonIcons.DEFAULT);
+
+            @ConfigProperty(name = "invertLook", comment = "If enabled, inverts the controls on the Y axis for the camera")
+            public final BoolProperty invertLook = BoolProperty.create(false); //TODO rename
+
+            @ConfigProperty(name = "invertRotation", comment = "If enabled, inverts the controls on the X axis for the camera")
+            public final BoolProperty invertRotation = BoolProperty.create(false); //TODO rename
+
+            @ConfigProperty(name = "deadZone", comment = "The distance you have to move the thumbstick before it's input is registered. This fixes drifting as some thumbsticks don't center to zero.")
+            public final DoubleProperty thumbstickDeadZone = DoubleProperty.create(0.1, 0.0, 1.0);
+
+            @ConfigProperty(name = "triggerDeadZone", comment = "How much the trigger has to be pressed before it's input is registered. This fixes issues with triggers not being completely released to zero")
+            public final DoubleProperty triggerDeadZone = DoubleProperty.create(0.05, 0.0, 1.0);
+
+            @ConfigProperty(name = "rotationSpeed", comment = "The speed which the camera turns in game")
+            public final DoubleProperty rotationSpeed = DoubleProperty.create(50.0, 0.0, 150.0);
+
+            // TODO rotation curve option (linear, cubic, etc)
+
+            @ConfigProperty(name = "pitchSensitivity", comment = "The sensitivity of the camera's pitch rotation when applying the rotation speed. Setting to 1.0 would mean applying 100% of the rotation speed.")
+            public final DoubleProperty pitchSensitivity = DoubleProperty.create(0.75, 0.0, 1.0);
+
+            @ConfigProperty(name = "yawSensitivity", comment = "The sensitivity of the camera's yaw rotation when applying the rotation speed. Setting to 1.0 would mean applying 100% of the rotation speed.")
+            public final DoubleProperty yawSensitivity = DoubleProperty.create(1.0, 0.0, 1.0);
+
+            @ConfigProperty(name = "mouseSpeed", comment = "The speed which the cursor or virtual mouse moves around the screen")
+            public final DoubleProperty cursorSpeed = DoubleProperty.create(15.0, 0.0, 50.0);
+
+            @ConfigProperty(name = "disableVirtualCursor", comment = "If enabled, this will disable and remove the virtual cursor from appearing. This is useful for a controller/mouse input combination.")
+            public final BoolProperty disableVirtualCursor = BoolProperty.create(false);
+
+            @ConfigProperty(name = "showActions", comment = "If enabled, shows common actions when displaying available on the screen")
+            public final EnumProperty<ActionVisibility> showButtonHints = EnumProperty.create(ActionVisibility.MINIMAL);
+
+            @ConfigProperty(name = "quickCraft", comment = "If enabled, allows you to craft quickly when clicking an item in the recipe book")
+            public final BoolProperty quickCraft = BoolProperty.create(true);
+
+            @ConfigProperty(name = "navigateSound", comment = "If enabled, plays a pop sound when you navigate in inventories, menus or scrolling the radial menu")
+            public final BoolProperty navigateSound = BoolProperty.create(true);
+
+            @ConfigProperty(name = "quickMoveSound", comment = "If enabled, plays the wooden button sound when quick moving items in an inventory (similar to legacy console edition)")
+            public final BoolProperty quickMoveSound = BoolProperty.create(true);
+
+            @ConfigProperty(name = "radialThumbstick", comment = "The thumbstick to use when scrolling items in the radial menu")
+            public final EnumProperty<Thumbstick> radialThumbstick = EnumProperty.create(Thumbstick.RIGHT);
+
+            @ConfigProperty(name = "hoverModifier", comment = "The scale of the mouse speed when hovering a widget or item slot")
+            public final DoubleProperty hoverModifier = DoubleProperty.create(0.6, 0.05, 1.0);
+
+            @ConfigProperty(name = "fpsPollingFix", comment = "Enabling this option will improve polling of controllers when your game FPS is capped. This will not have an effect if your game is already running at a low FPS without a cap.")
+            public final BoolProperty fpsPollingFix = BoolProperty.create(false);
+
+            @ConfigProperty(name = "hintBackground", comment = "Draws a transparent background behind the text of the button hint")
+            public final BoolProperty drawHintBackground = BoolProperty.create(true);
+
+            @ConfigProperty(name = "listScrollSpeed", comment = "The speed that lists scroll")
+            public final DoubleProperty listScrollSpeed = DoubleProperty.create(10.0, 1.0, 30.0);
+
+            @ConfigProperty(name = "spyglassSensitivity", comment = "Adjusts the camera sensitivity when looking through a spyglass")
+            public final DoubleProperty spyglassSensitivity = DoubleProperty.create(0.2, 0.0, 1.0);
+
+            @ConfigProperty(name = "analogMovement", comment = """
+                Allows you to control the settings of analog movement
+                
+                You have three options:
+                - DISABLED:   Player movement will behave like you are using a keyboard
+                - LOCAL_ONLY: Player movement will depend on how much input you are applying to the
+                              thumbstick, giving you more precise control over direction and speed.
+                              However, this feature will only work in singleplayer/lan servers.
+                - ALWAYS:     Same as LOCAL_ONLY but allows you to additionally use the feature on
+                              remote servers (read message below).
+                
+                You should set this to DISABLED or LOCAL_ONLY if you are playing on public
+                servers (e.g Hypixel) as analog movement may be detected by anti-cheat software.""")
+            public final EnumProperty<AnalogMovement> analogMovement = EnumProperty.create(AnalogMovement.LOCAL_ONLY);
+
+            // TODO movement curve option (linear, cubic, etc)
+
+            @ConfigProperty(name = "backgroundInput", comment = """
+                If enabled, allows reading controller input even if the window is not in focus. This option will also
+                prevent the game from auto pausing if the window loses focus.""")
+            public final BoolProperty backgroundInput = BoolProperty.create(true);
+
+            @ConfigProperty(name = "overlayTimeout", comment = """
+                If enabled, after four seconds, any overlays related to the controller will be hidden if no input is detected""")
+            public final BoolProperty overlayTimeout = BoolProperty.create(true);
+
+            @ConfigProperty(name = "advanced", comment = """
+                Advanced related options. "advancedMode" option must be enabled""")
+            public final Advanced advanced = new Advanced();
+
+            public static class Advanced
+            {
+                @ConfigProperty(name = "advancedMode", comment = """
+                If enabled, shows more advanced options for finer tuning""")
+                public final BoolProperty advancedMode = BoolProperty.create(true);
+
+                @ConfigProperty(name = "leftThumbstickDeadZone", comment = "The distance you have to move the left thumbstick before it's input is registered. This fixes drifting as some thumbsticks don't center to zero.")
+                public final DoubleProperty leftThumbstickDeadZone = DoubleProperty.create(0.1, 0.0, 1.0);
+
+                @ConfigProperty(name = "rightThumbstickDeadZone", comment = "The distance you have to move the right thumbstick before it's input is registered. This fixes drifting as some thumbsticks don't center to zero.")
+                public final DoubleProperty rightThumbstickDeadZone = DoubleProperty.create(0.1, 0.0, 1.0);
+            }
+        }
+    }
+}
