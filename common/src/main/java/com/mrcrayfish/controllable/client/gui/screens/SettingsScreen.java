@@ -269,12 +269,6 @@ public class SettingsScreen extends Screen
         return false;
     }
     
-    public void processButtonRelease(int index)
-    {
-        // Button release handling is done in the tick() method
-        // This method is kept for potential future use
-    }
-    
     private void finalizeBinding()
     {
         if(this.selectedBinding != null && !this.pendingButtons.isEmpty())
