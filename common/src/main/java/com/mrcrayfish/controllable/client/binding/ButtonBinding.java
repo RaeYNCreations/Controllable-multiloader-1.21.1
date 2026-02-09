@@ -25,6 +25,14 @@ public class ButtonBinding implements Comparable<ButtonBinding>
     private int button; // Primary button for backward compatibility
     private Set<Integer> buttons; // Multi-button support
     private boolean pressed;
+    
+    /**
+     * Helper method to create a button set from a single button
+     */
+    private static Set<Integer> createButtonSet(int button)
+    {
+        return button >= 0 ? new TreeSet<>(Collections.singleton(button)) : new TreeSet<>();
+    }
 
     public ButtonBinding(int button, String descriptionKey, String category, BindingContext context, ButtonHandler handler)
     {
@@ -35,7 +43,7 @@ public class ButtonBinding implements Comparable<ButtonBinding>
     {
         this.button = button;
         this.defaultButton = button;
-        this.buttons = button >= 0 ? new TreeSet<>(Collections.singleton(button)) : new TreeSet<>();
+        this.buttons = createButtonSet(button);
         this.defaultButtons = new TreeSet<>(this.buttons);
         this.descriptionKey = descriptionKey;
         this.category = category;
@@ -152,7 +160,7 @@ public class ButtonBinding implements Comparable<ButtonBinding>
     public static void setButton(ButtonBinding binding, int button)
     {
         binding.button = button;
-        binding.buttons = button >= 0 ? new TreeSet<>(Collections.singleton(button)) : new TreeSet<>();
+        binding.buttons = createButtonSet(button);
     }
     
     @ApiStatus.Internal

@@ -271,15 +271,8 @@ public class SettingsScreen extends Screen
     
     public void processButtonRelease(int index)
     {
-        if(this.selectedBinding != null && this.pendingButtons.contains(index))
-        {
-            // When a button is released, check if any buttons are still pressed
-            // If not, finalize the binding
-            Controllable.getController().getTrackedButtonStates();
-            
-            // Give a small delay to allow for chord completion
-            // We'll check in the tick method if all buttons are released
-        }
+        // Button release handling is done in the tick() method
+        // This method is kept for potential future use
     }
     
     private void finalizeBinding()
