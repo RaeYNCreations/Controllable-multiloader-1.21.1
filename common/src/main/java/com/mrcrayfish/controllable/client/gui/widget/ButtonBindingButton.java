@@ -33,13 +33,38 @@ public class ButtonBindingButton extends Button
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
         super.renderWidget(graphics, mouseX, mouseY, partialTicks);
-        if(this.binding.getButton() < 0)
+        
+        if(this.binding.isUnbound())
             return;
-        int texU = this.binding.getButton() * 13;
-        int texV = Config.CLIENT.options.controllerIcons.get().ordinal() * 13;
-        int size = 13;
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        graphics.blit(ButtonIcons.TEXTURE, this.getX() + (this.width - size) / 2 + 1, this.getY() + 3, texU, texV, size, size, ButtonIcons.TEXTURE_WIDTH, ButtonIcons.TEXTURE_HEIGHT);
+            
+        if(this.binding.isMultiButton())
+        {
+            // For multi-button bindings, show the first button with a "+" indicator
+            int primaryButton = this.binding.getButton();
+            int texU = primaryButton * 13;
+            int texV = Config.CLIENT.options.controllerIcons.get().ordinal() * 13;
+            int size = 13;
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            
+            // Draw the first button icon slightly offset to the left
+            graphics.blit(ButtonIcons.TEXTURE, this.getX() + (this.width - size) / 2 - 5, this.getY() + 3, texU, texV, size, size, ButtonIcons.TEXTURE_WIDTH, ButtonIcons.TEXTURE_HEIGHT);
+            
+            // Draw a "+" indicator
+            graphics.drawString(Minecraft.getInstance().font, "+", this.getX() + (this.width) / 2 + 4, this.getY() + 6, 0xFFFFFFFF, false);
+            
+            // Draw count of additional buttons
+            int additionalCount = this.binding.getButtons().size() - 1;
+            graphics.drawString(Minecraft.getInstance().font, String.valueOf(additionalCount), this.getX() + (this.width) / 2 + 10, this.getY() + 6, 0xFFFFFFFF, false);
+        }
+        else
+        {
+            // Single button binding - original behavior
+            int texU = this.binding.getButton() * 13;
+            int texV = Config.CLIENT.options.controllerIcons.get().ordinal() * 13;
+            int size = 13;
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            graphics.blit(ButtonIcons.TEXTURE, this.getX() + (this.width - size) / 2 + 1, this.getY() + 3, texU, texV, size, size, ButtonIcons.TEXTURE_WIDTH, ButtonIcons.TEXTURE_HEIGHT);
+        }
     }
 
     @Override
