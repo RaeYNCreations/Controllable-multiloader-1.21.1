@@ -60,7 +60,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     // Core dependencies
     implementation "net.neoforged:neoforge:${neoforge_version}"
-    implementation "com.mrcrayfish:framework-neoforge:${minecraft_version}-${framework_version}"
+    implementation files('libs/framework-neoforge-1.21.1-0.13.11-signed.jar')
 
     // JEI
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
@@ -72,11 +72,8 @@ dependencies {
     // Roughly Enough Items
     compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
 
-    // Controllable SDL (https://github.com/MrCrayfish/ControllableSDL)
-    library jarJar("com.mrcrayfish:controllable-sdl:${controllable_sdl_version}") {
-        transitive(false)
-    }
-
+    // Controllable SDL (local build)
+    library jarJar(files('libs/controllable-sdl-2.32.10-1.1.0.jar'))
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"

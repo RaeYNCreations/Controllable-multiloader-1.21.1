@@ -1,0 +1,28 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.mrcrayfish.framework.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "EntityMixin",
+        "ExperienceOrbMixin",
+        "ItemEntityMixin",
+        "LivingEntityMixin",
+        "PlayerListMixin",
+        "PlayerMixin",
+        "ResultSlotMixin",
+        "ServerPlayerMixin"
+    ],
+    "client": [
+        "client.AbstractContainerScreenMixin",
+        "client.BlockModelDeserializerMixin",
+        "client.GameRendererMixin",
+        "client.KeyboardHandlerMixin",
+        "client.LocalPlayerMixin",
+        "client.MinecraftMixin",
+        "client.OptionsMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

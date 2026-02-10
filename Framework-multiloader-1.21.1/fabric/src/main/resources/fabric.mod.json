@@ -1,0 +1,36 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${mod_version}",
+    "name": "${mod_name}",
+    "description": "${mod_desc}",
+    "authors": [ "${mod_author}" ],
+    "contact": {
+        "homepage": "${mod_homepage}",
+        "sources": "${mod_source}"
+    },
+    "license": "${mod_license}",
+    "icon": "assets/${mod_id}/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.mrcrayfish.framework.FrameworkFabric",
+            "com.mrcrayfish.framework.event.FabricEvents"
+        ],
+        "client": [
+            "com.mrcrayfish.framework.client.ClientFrameworkFabric",
+            "com.mrcrayfish.framework.client.FabricClientEvents"
+        ]
+    },
+    "mixins": [
+        "framework.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.15",
+        "fabric": "*",
+        "minecraft": "${minecraft_version}",
+        "java": ">=21"
+    },
+    "accessWidener": "framework.accesswidener"
+}
+  

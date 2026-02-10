@@ -1,0 +1,105 @@
+package com.mrcrayfish.framework.platform;
+
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mrcrayfish.framework.api.FrameworkAPI;
+import com.mrcrayfish.framework.api.menu.IMenuData;
+import com.mrcrayfish.framework.api.registry.RegistryContainer;
+import com.mrcrayfish.framework.platform.services.IRegistrationHelper;
+import com.mrcrayfish.framework.util.ReflectionUtils;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.network.IContainerFactory;
+import org.apache.commons.lang3.function.TriFunction;
+import org.objectweb.asm.Type;
+
+import java.lang.annotation.ElementType;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+/**
+ * Author: MrCrayfish
+ */
+public class ForgeRegistrationHelper implements IRegistrationHelper
+{
+    public static final Type ENTRY_CONTAINER = Type.getType(RegistryContainer.class);
+
+    private final Set<Class<?>> registryClasses = new HashSet<>();
+    private boolean loadedRegistryClasses;
+
+    @Override
+    public <T> List<T> getRegistryObjects(Class<T> objectType)
+    {
+        if(!this.loadedRegistryClasses)
+        {
+            ModList.get().getAllScanData().stream()
+                .map(ModFileScanData::getAnnotations)
+                .flatMap(Collection::stream)
+                .filter(a -> a.targetType() == ElementType.TYPE)
+                .filter(a -> ENTRY_CONTAINER.equals(a.annotationType()))
+                .filter(a -> {
+                    boolean clientOnly = (boolean) a.annotationData().getOrDefault("clientOnly", false);
+                    return !clientOnly || FrameworkAPI.getEnvironment().isClient();
+                })
+                .map(ModFileScanData.AnnotationData::memberName)
+                .map(ReflectionUtils::getClass)
+                .forEach(this.registryClasses::add);
+            this.loadedRegistryClasses = true;
+        }
+        return this.registryClasses.stream()
+            .flatMap(holderClass -> ReflectionUtils.findPublicStaticObjects(objectType, holderClass).stream())
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    @SuppressWarnings({"ConstantConditions"})
+    public <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(BiFunction<BlockPos, BlockState, T> function, Supplier<Block[]> validBlocksSupplier)
+    {
+        return BlockEntityType.Builder.of(function::apply, validBlocksSupplier.get()).build(null);
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> createMenuType(BiFunction<Integer, Inventory, T> function)
+    {
+        return new MenuType<>(function::apply, FeatureFlags.DEFAULT_FLAGS);
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu, D extends IMenuData<D>> MenuType<T> createMenuTypeWithData(StreamCodec<RegistryFriendlyByteBuf, D> codec, TriFunction<Integer, Inventory, D, T> function)
+    {
+        return new MenuType<>((IContainerFactory<T>) (windowId, inv, data) -> {
+            RegistryFriendlyByteBuf buf = RegistryFriendlyByteBuf.decorator(inv.player.registryAccess()).apply(data);
+            return function.apply(windowId, inv, codec.decode(buf));
+        }, FeatureFlags.DEFAULT_FLAGS);
+    }
+
+    @Override
+    public <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I createArgumentTypeInfo(Class<A> argumentTypeClass, Supplier<I> supplier)
+    {
+        return ArgumentTypeInfos.registerByClass(argumentTypeClass, supplier.get());
+    }
+
+    @Override
+    public CreativeModeTab.Builder createCreativeModeTabBuilder()
+    {
+        return CreativeModeTab.builder();
+    }
+}
