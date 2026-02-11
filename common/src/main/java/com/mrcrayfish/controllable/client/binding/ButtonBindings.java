@@ -12,11 +12,7 @@ import com.mrcrayfish.controllable.client.binding.handlers.OnPressHandler;
 import com.mrcrayfish.controllable.client.InputHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.DropHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.SneakHandler;
-import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczZoomHandler;
-import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczAimHandler;
-import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczShootHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.AttackHandler;
-import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczInteractHandler;
 import com.mrcrayfish.controllable.client.gui.screens.SettingsScreen;
 import com.mrcrayfish.controllable.client.input.Buttons;
 import com.mrcrayfish.controllable.client.util.MouseHooks;
@@ -43,6 +39,8 @@ import net.minecraft.world.effect.MobEffects;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author: MrCrayfish
@@ -108,40 +106,17 @@ public class ButtonBindings
 
     public static final ButtonBinding DROP_ITEM = new ButtonBinding(Buttons.DPAD_DOWN, "key.drop", "key.categories.gameplay", InGameContext.INSTANCE, new DropHandler());
     
-    // Don't initialize these in static block - do it later
-    public static ButtonBinding USE_ITEM;
-    public static ButtonBinding ATTACK;
-    public static ButtonBinding ZOOM;
-    public static ButtonBinding INTERACT;
-
-    // Initialize with vanilla defaults
-    static {
-        System.out.println("[ButtonBindings] Static block - creating vanilla bindings as defaults");
-        USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "key.use", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {
-            return Optional.of(() -> {
-                context.player().ifPresent(player -> {
-                    if(!player.isUsingItem()) {
-                        ClientServices.CLIENT.startUseItem(context.minecraft());
-                    }
-                });
+    public static final ButtonBinding USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "key.use", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {
+        return Optional.of(() -> {
+            context.player().ifPresent(player -> {
+                if(!player.isUsingItem()) {
+                    ClientServices.CLIENT.startUseItem(context.minecraft());
+                }
             });
-        }));
-        ATTACK = new ButtonBinding(Buttons.RIGHT_TRIGGER, "key.attack", "key.categories.gameplay", InGameContext.INSTANCE, new AttackHandler());
-        ZOOM = null;
-        INTERACT = null;
-    }
-    
-    // Call this method AFTER TACZ is loaded to replace the bindings
-    public static void initTaczBindings() {
-        System.out.println("[ButtonBindings] initTaczBindings called - replacing vanilla with TACZ bindings");
-        USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "tacz.aim", "key.categories.gameplay", InGameContext.INSTANCE, new TaczAimHandler());
-        ATTACK = new ButtonBinding(Buttons.RIGHT_TRIGGER, "tacz.shoot", "key.categories.gameplay", InGameContext.INSTANCE, new TaczShootHandler());
-        ZOOM = new ButtonBinding(Buttons.DPAD_UP, "tacz.zoom", "key.categories.gameplay", InGameContext.INSTANCE, new TaczZoomHandler());
-        INTERACT = new ButtonBinding(Buttons.LEFT_BUMPER, "tacz.interact", "key.categories.gameplay", InGameContext.INSTANCE, new TaczInteractHandler());
-        
-        // Re-register them
-        Controllable.getBindingRegistry().rebuildCache();
-    }
+        });
+    }));
+
+    public static final ButtonBinding ATTACK = new ButtonBinding(Buttons.RIGHT_TRIGGER, "key.attack", "key.categories.gameplay", InGameContext.INSTANCE, new AttackHandler());
 
     public static final ButtonBinding PICK_BLOCK = new ButtonBinding(Buttons.DPAD_LEFT, "key.pickItem", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {
         return Optional.of(() -> {

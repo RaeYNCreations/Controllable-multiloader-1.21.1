@@ -121,15 +121,6 @@ public class BindingRegistry
         this.register(ButtonBindings.LOOK_DOWN);
         this.register(ButtonBindings.LOOK_LEFT);
         this.register(ButtonBindings.LOOK_RIGHT);
-        if (ButtonBindings.USE_ITEM != null) {
-            this.register(ButtonBindings.USE_ITEM);
-        }
-        if (ButtonBindings.ATTACK != null) {
-            this.register(ButtonBindings.ATTACK);
-        }
-        if (ButtonBindings.ZOOM != null) {
-            this.register(ButtonBindings.ZOOM);
-        }
     }
 
     public List<ButtonBinding> getRegisteredBindings()
