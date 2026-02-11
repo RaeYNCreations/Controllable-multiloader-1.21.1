@@ -10,9 +10,10 @@ import com.mrcrayfish.controllable.client.binding.handlers.MovementInputHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.OnPressAndReleaseHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.OnPressHandler;
 import com.mrcrayfish.controllable.client.InputHandler;
-import com.mrcrayfish.controllable.client.binding.handlers.impl.AttackHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.DropHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.SneakHandler;
+import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczZoomHandler;
+import com.mrcrayfish.controllable.client.binding.handlers.impl.AttackHandler;
 import com.mrcrayfish.controllable.client.gui.screens.SettingsScreen;
 import com.mrcrayfish.controllable.client.input.Buttons;
 import com.mrcrayfish.controllable.client.util.MouseHooks;
@@ -103,18 +104,30 @@ public class ButtonBindings
     }));
 
     public static final ButtonBinding DROP_ITEM = new ButtonBinding(Buttons.DPAD_DOWN, "key.drop", "key.categories.gameplay", InGameContext.INSTANCE, new DropHandler());
+    // Change to non-final
+    public static ButtonBinding USE_ITEM;
+    public static ButtonBinding ATTACK;
+    public static ButtonBinding ZOOM;
 
-    public static final ButtonBinding ATTACK = new ButtonBinding(Buttons.RIGHT_TRIGGER, "key.attack", "key.categories.gameplay", InGameContext.INSTANCE, new AttackHandler());
-
-    public static final ButtonBinding USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "key.use", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {
-        return Optional.of(() -> {
-            context.player().ifPresent(player -> {
-                if(!player.isUsingItem()) {
-                    ClientServices.CLIENT.startUseItem(context.minecraft());
-                }
-            });
-        });
-    }));
+    static {
+        if (Controllable.isTaczLoaded()) {
+            USE_ITEM = null;
+            ATTACK = null;
+            ZOOM = new ButtonBinding(Buttons.DPAD_UP, "tacz.zoom", "key.categories.gameplay", InGameContext.INSTANCE, new TaczZoomHandler());
+        } else {
+            USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "key.use", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {
+                return Optional.of(() -> {
+                    context.player().ifPresent(player -> {
+                        if(!player.isUsingItem()) {
+                            ClientServices.CLIENT.startUseItem(context.minecraft());
+                        }
+                    });
+                });
+            }));
+            ATTACK = new ButtonBinding(Buttons.RIGHT_TRIGGER, "key.attack", "key.categories.gameplay", InGameContext.INSTANCE, new AttackHandler());
+            ZOOM = null;
+        }
+    }
 
     public static final ButtonBinding PICK_BLOCK = new ButtonBinding(Buttons.DPAD_LEFT, "key.pickItem", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {
         return Optional.of(() -> {
@@ -456,4 +469,5 @@ public class ButtonBindings
     public static final ButtonBinding LOOK_LEFT = new ButtonBinding(Buttons.RIGHT_THUMB_STICK_LEFT, "controllable.key.look_left", "key.categories.movement", InGameContext.INSTANCE, EmptyHandler.INSTANCE);
 
     public static final ButtonBinding LOOK_RIGHT = new ButtonBinding(Buttons.RIGHT_THUMB_STICK_RIGHT, "controllable.key.look_right", "key.categories.movement", InGameContext.INSTANCE, EmptyHandler.INSTANCE);
+
 }

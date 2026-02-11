@@ -34,6 +34,7 @@ public class Controllable
     private static final boolean EMI_LOADED = Utils.isModLoaded("emi");
     private static final boolean REI_LOADED = Utils.isModLoaded("roughlyenoughitems");
     private static final boolean JEI_LOADED = Utils.isModLoaded("jei") && !EMI_LOADED && !REI_LOADED;
+    private static final boolean TACZ_LOADED = Utils.isModLoaded("tacz");
 
     public static void init()
     {
@@ -76,6 +77,11 @@ public class Controllable
         return RUMBLE_HANDLER;
     }
 
+    public static boolean isTaczLoaded()
+    {
+        return TACZ_LOADED;
+    }
+    
     public static boolean isArchitecturyLoaded()
     {
         return ARCHITECTURY_LOADED;
