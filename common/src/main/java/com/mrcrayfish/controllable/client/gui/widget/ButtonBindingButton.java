@@ -9,6 +9,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.CommonComponents;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Author: MrCrayfish
  */
@@ -16,6 +19,7 @@ public class ButtonBindingButton extends Button
 {
     private final ButtonBinding binding;
     private final ButtonOnPress onPress;
+    private static final int MAX_DISPLAYED_BUTTONS = 3; // Maximum buttons to show as icons
 
     public ButtonBindingButton(int x, int y, ButtonBinding binding, ButtonOnPress onPress)
     {
@@ -39,22 +43,49 @@ public class ButtonBindingButton extends Button
             
         if(this.binding.isMultiButton())
         {
-            // For multi-button bindings, show the first button with a "+" indicator
-            int primaryButton = this.binding.getButton();
-            int texU = primaryButton * 13;
+            // Get all buttons in the binding
+            List<Integer> buttons = new ArrayList<>(this.binding.getButtons());
+            int buttonCount = buttons.size();
+            int displayCount = Math.min(buttonCount, MAX_DISPLAYED_BUTTONS);
+            
             int texV = Config.CLIENT.options.controllerIcons.get().ordinal() * 13;
             int size = 13;
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             
-            // Draw the first button icon slightly offset to the left
-            graphics.blit(ButtonIcons.TEXTURE, this.getX() + (this.width - size) / 2 - 5, this.getY() + 3, texU, texV, size, size, ButtonIcons.TEXTURE_WIDTH, ButtonIcons.TEXTURE_HEIGHT);
+            // Calculate total width needed for all icons + plus signs
+            int iconWidth = size;
+            int plusWidth = 4; // Width of "+" character
+            int spacing = 2;
+            int totalWidth = (iconWidth * displayCount) + (plusWidth * (displayCount - 1)) + (spacing * (displayCount - 1));
             
-            // Draw a "+" indicator
-            graphics.drawString(Minecraft.getInstance().font, "+", this.getX() + (this.width) / 2 + 4, this.getY() + 6, 0xFFFFFFFF, false);
+            // Starting X position to center everything
+            int startX = this.getX() + (this.width - totalWidth) / 2;
+            int currentX = startX;
             
-            // Draw count of additional buttons
-            int additionalCount = this.binding.getButtons().size() - 1;
-            graphics.drawString(Minecraft.getInstance().font, String.valueOf(additionalCount), this.getX() + (this.width) / 2 + 10, this.getY() + 6, 0xFFFFFFFF, false);
+            // Draw each button icon with "+" between them
+            for(int i = 0; i < displayCount; i++)
+            {
+                int button = buttons.get(i);
+                int texU = button * 13;
+                
+                // Draw button icon
+                graphics.blit(ButtonIcons.TEXTURE, currentX, this.getY() + 3, texU, texV, size, size, ButtonIcons.TEXTURE_WIDTH, ButtonIcons.TEXTURE_HEIGHT);
+                currentX += iconWidth + spacing;
+                
+                // Draw "+" between icons (but not after the last one)
+                if(i < displayCount - 1)
+                {
+                    graphics.drawString(Minecraft.getInstance().font, "+", currentX, this.getY() + 6, 0xFFFFFFFF, false);
+                    currentX += plusWidth + spacing;
+                }
+            }
+            
+            // If there are more buttons than we can display, show "+N" at the end
+            if(buttonCount > MAX_DISPLAYED_BUTTONS)
+            {
+                int remaining = buttonCount - MAX_DISPLAYED_BUTTONS;
+                graphics.drawString(Minecraft.getInstance().font, "+" + remaining, currentX + 2, this.getY() + 6, 0xAAAAAAAA, false);
+            }
         }
         else
         {

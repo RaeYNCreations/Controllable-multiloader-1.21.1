@@ -6,14 +6,14 @@ import com.mrcrayfish.controllable.integration.TaczSupport;
 
 import java.util.Optional;
 
-public class TaczZoomHandler extends OnPressHandler {
+public class TaczInteractHandler extends OnPressHandler {
     
     @Override
     public Optional<Runnable> createPressedHandler(Context context) {
-        System.out.println("[TaczZoomHandler] createPressedHandler called"); // DEBUG
+        System.out.println("[TaczInteractHandler] createPressedHandler called"); // DEBUG
         return Optional.of(() -> {
-            System.out.println("[TaczZoomHandler] Press action running"); // DEBUG
-            TaczSupport.handleZoomButton(true);
+            System.out.println("[TaczInteractHandler] Press action running"); // DEBUG
+            TaczSupport.handleInteractButton(true);
         });
     }
 }

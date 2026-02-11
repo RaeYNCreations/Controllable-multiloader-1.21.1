@@ -45,6 +45,13 @@ public class Controllable
         CAMERA_HANDLER.registerEvents();
         RADIAL_MENU.registerEvents();
         SCROLLING_HANDLER.registerEvents();
+        
+        // DEBUG: Print all registered bindings
+        System.out.println("[Controllable] === Registered Bindings ===");
+        BINDING_REGISTRY.getBindings().forEach(binding -> {
+            System.out.println("[Controllable] " + binding.getDescription() + " -> Button: " + binding.getButton() + " (Multi: " + binding.isMultiButton() + ")");
+        });
+        System.out.println("[Controllable] === End Bindings ===");
     }
 
     public static BindingRegistry getBindingRegistry()
