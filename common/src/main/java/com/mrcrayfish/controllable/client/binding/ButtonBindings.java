@@ -13,6 +13,8 @@ import com.mrcrayfish.controllable.client.InputHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.DropHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.SneakHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczZoomHandler;
+import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczAimHandler;
+import com.mrcrayfish.controllable.client.binding.handlers.impl.TaczShootHandler;
 import com.mrcrayfish.controllable.client.binding.handlers.impl.AttackHandler;
 import com.mrcrayfish.controllable.client.gui.screens.SettingsScreen;
 import com.mrcrayfish.controllable.client.input.Buttons;
@@ -104,15 +106,15 @@ public class ButtonBindings
     }));
 
     public static final ButtonBinding DROP_ITEM = new ButtonBinding(Buttons.DPAD_DOWN, "key.drop", "key.categories.gameplay", InGameContext.INSTANCE, new DropHandler());
-    // Change to non-final
+    
     public static ButtonBinding USE_ITEM;
     public static ButtonBinding ATTACK;
     public static ButtonBinding ZOOM;
 
     static {
         if (Controllable.isTaczLoaded()) {
-            USE_ITEM = null;
-            ATTACK = null;
+            USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "tacz.aim", "key.categories.gameplay", InGameContext.INSTANCE, new TaczAimHandler());
+            ATTACK = new ButtonBinding(Buttons.RIGHT_TRIGGER, "tacz.shoot", "key.categories.gameplay", InGameContext.INSTANCE, new TaczShootHandler());
             ZOOM = new ButtonBinding(Buttons.DPAD_UP, "tacz.zoom", "key.categories.gameplay", InGameContext.INSTANCE, new TaczZoomHandler());
         } else {
             USE_ITEM = new ButtonBinding(Buttons.LEFT_TRIGGER, "key.use", "key.categories.gameplay", InGameContext.INSTANCE, OnPressHandler.create(context -> {

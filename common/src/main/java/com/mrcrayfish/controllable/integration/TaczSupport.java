@@ -23,13 +23,32 @@ public class TaczSupport {
     }
 
     public static void handleZoomButton(boolean pressed) {
-        // Call TacZ's zoom method via reflection
         try {
-            Class<?> zoomKey = Class.forName("com.tacz.guns.client.input.ZoomKey");
-            Method method = zoomKey.getMethod("onZoomControllerPress", boolean.class);
-            method.invoke(null, pressed);
+            if (onZoomControllerPress != null) {
+                onZoomControllerPress.invoke(null, pressed);
+            }
         } catch (Exception e) {
-            // Handle
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleAimButton(boolean pressed) {
+        try {
+            if (onAimControllerPress != null) {
+                onAimControllerPress.invoke(null, pressed);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleShootButton(boolean pressed) {
+        try {
+            if (semiShootController != null) {
+                semiShootController.invoke(null, pressed);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
